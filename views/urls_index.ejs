@@ -9,7 +9,7 @@
       <h3>List of existing urls:</h3>
       <% for (var i in urls) { %>
         <form method="POST" action="/urls/<%= i %>/delete">
-          <li><%= i %> - <%= urls[i] %>
+          <li><a href="/urls/<%= i %>"><%= i %></a> - <%= urls[i] %>
           <input type="submit" value="Delete">
           </li>
         </form>

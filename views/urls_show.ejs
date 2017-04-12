@@ -9,6 +9,12 @@
     <%= shortURL %> - <%= longURL %>
     <br>
     <br>
+    <form method="POST" action="/urls/<%= shortURL %>/update">
+      <label for="updateURL">Update URL:</label>
+      <input id="updateURL" type="text" name="updateURL" placeholder="http://" style="width: 300px">
+      <input type="submit" value="Submit">
+    </form>
+    <br>
     <a href="../urls">home</a>
   </body>
 </html>
