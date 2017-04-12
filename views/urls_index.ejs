@@ -5,12 +5,16 @@
 </head>
 <body>
   <% include ./partials/_header %>
-  <ul>
-      <!-- "werewr" - "www.google.com" -->
+  <ul style="list-style: none;">
+      <h3>List of existing urls:</h3>
       <% for (var i in urls) { %>
-          <li><%= i %> - <%= urls[i] %></li>
+        <form method="POST" action="/urls/<%= i %>/delete">
+          <li><%= i %> - <%= urls[i] %>
+          <input type="submit" value="Delete">
+          </li>
+        </form>
       <% }; %>
   </ul>
-  <a href="">Add new URL</a>
+  <a href="/urls/new">Create new short URL</a>
 </body>
 </html>

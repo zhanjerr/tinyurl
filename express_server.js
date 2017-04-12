@@ -52,10 +52,20 @@ app.get("/urls/:id", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
+app.post("/urls/:id/delete", (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect("/urls");
+});
+
 app.get("/u/:shortURL", (req, res) => {
   let longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
 });
+
+app.get('/*', (req, res) => {
+  res.status(404);
+  res.send(`404 page not found: ${req.method} ${req.url} is not valid`)
+})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on PORT: ${PORT}`);
