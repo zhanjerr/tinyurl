@@ -18,13 +18,43 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
+const users = {
+  "m4K13": {
+    id: "m4K13",
+    email: "user@example.com",
+    password: "password"
+  },
+ "3Jsq2": {
+    id: "3Jsq2",
+    email: "bob@bob.com",
+    password: "password"
+  }
+}
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
 
 //home page
-app.get("/", (req, res) => {res.redirect('/urls')});
+app.get("/", (req, res) => {
+  // let templateVars = {username: req.cookies["username"]};
+  res.render('landing');
+});
+
+//registration
+app.get("/register", (req, res) => res.render('register'));
+
+app.post("/register", (req, res) => {
+  let new_id = generateRandomString(5);
+  let new_user = {
+    'id' : new_id,
+    'email' : req.body.email,
+    'password' : req.body.password
+  };
+  users[new_id] = new_user;
+  res.redirect("/urls");
+});
 
 //login
 app.post("/login", (req, res) => {
@@ -44,7 +74,7 @@ app.get("/urls", (req, res) => {
     urls: urlDatabase,
     username: req.cookies["username"]
   };
-  res.render("urls_index", templateVars)
+  res.render("urls_index", templateVars);
 });
 
 //delivering url obj in JSON
