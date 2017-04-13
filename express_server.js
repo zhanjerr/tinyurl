@@ -46,14 +46,20 @@ app.get("/", (req, res) => {
 app.get("/register", (req, res) => res.render('register'));
 
 app.post("/register", (req, res) => {
-  let new_id = generateRandomString(5);
-  let new_user = {
-    'id' : new_id,
-    'email' : req.body.email,
-    'password' : req.body.password
-  };
-  users[new_id] = new_user;
-  res.redirect("/urls");
+  if(!req.body.email || !req.body.password){
+    res.status(404);
+    res.end('<html><head></head><body><p>You need to enter both an email and a password</p><button onclick="window.history.back();">Go Back</button></body></html>')
+  } else {
+    let new_id = generateRandomString(5);
+    let new_user = {
+      'id' : new_id,
+      'email' : req.body.email,
+      'password' : req.body.password
+    };
+    users[new_id] = new_user;
+    res.cookie('user_id', new_id);
+    res.redirect("/");
+  }
 });
 
 //login
