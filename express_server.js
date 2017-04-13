@@ -24,14 +24,18 @@ const urlDatabase = {
 };
 
 //home page
-app.get("/", (req, res) => {
-  res.redirect('/urls')
-});
+app.get("/", (req, res) => {res.redirect('/urls')});
 
 //login
-app.post("/login", (req, res) =>{
+app.post("/login", (req, res) => {
   res.cookie('username', req.body.username);
   res.redirect('/urls');
+});
+
+//logout
+app.post("/logout", (req, res) => {
+  res.clearCookie('username');
+  res.redirect("/");
 });
 
 //displaying page of all shortURL : longURL
@@ -44,9 +48,7 @@ app.get("/urls", (req, res) => {
 });
 
 //delivering url obj in JSON
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
+app.get("/urls.json", (req, res) => {res.json(urlDatabase)});
 
 //displaying add new url page
 app.get("/urls/new", (req, res) => {
@@ -79,7 +81,7 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //updating longURL given shortURL and new longURL
 app.post("/urls/:id/update", (req, res) => {
-  urlDatabase[req.params.id] = req.body.updateURL;
+  urlDatabase[req.params.id] = `http://req.body.updateURL;`
   res.redirect("/urls");
 });
 

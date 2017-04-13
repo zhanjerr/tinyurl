@@ -7,6 +7,11 @@
     <input type="submit" value="Submit">
   </form>
   <% } else { %>
-  <p>Welcome! <%= username %></p>
+  <form method="POST" action="/logout">
+    <p>
+      Welcome! <%= username %>
+      <input type="submit" value="Logout">
+    </p>
+  </form>
   <% }; %>
 </header>
