@@ -1,17 +1,17 @@
 <!-- views/partials/header.ejs -->
 <header>
-  <% if(!user_id) { %>
+  <% if(!userID) { %>
   <form method="POST" action="/login">
     <label for="email">email:</label>
     <input id = "email" type="text" name="email" style="width: 100px">
-    <label for="password">email:</label>
+    <label for="password">password:</label>
     <input id = "password" type="password" name="password" style="width: 100px">
     <input type="submit" value="Login">
   </form>
   <% } else { %>
   <form method="POST" action="/logout">
     <p>
-      Welcome user: <%= user_id %>
+      Welcome user: <%= userID %>
       <input type="submit" value="Logout">
     </p>
   </form>

@@ -44,7 +44,7 @@ const urlDatabase = {
 
 //home page
 app.get("/", (req, res) => {
-  let templateVars = {user_id: req.cookies.user_id};
+  let templateVars = {userID: req.cookies.user_id};
   res.render('landing', templateVars);
 });
 
@@ -80,7 +80,6 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   let input_email = req.body.email;
   let input_password = req.body.password;
-
   for (var entry in users) {
     let entry_email = users[entry.toString()].email;
     let entry_password = users[entry.toString()].password;
@@ -106,7 +105,7 @@ app.post("/logout", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    user_id: req.cookies["user_id"]
+    userID: req.cookies["user_id"]
   };
   res.render("urls_index", templateVars);
 });
@@ -119,8 +118,8 @@ app.get("/users.json", (req, res) => {res.json(users)});
 
 //displaying add new url page
 app.get("/urls/new", (req, res) => {
-  let templateVars = {user_id: req.cookies["user_id"]};
-  if(!users[templateVars.user_id]){
+  let templateVars = {userID: req.cookies["user_id"]};
+  if(!users[templateVars.userID]){
     res.redirect("/login");
   }
   res.render("urls_new", templateVars);
@@ -131,7 +130,7 @@ app.post("/urls/new", (req, res) =>{
   let shortURL = generateRandomString(6);
   urlDatabase[shortURL] = {
     url: `http://${req.body.longURL}`,
-    user_id: req.cookies.user_id
+    userID: req.cookies.user_id
   };
   res.redirect(`/urls/${shortURL}`);
 });
@@ -141,24 +140,34 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id].url,
-    user_id: req.cookies.user_id
+    userID: req.cookies.user_id
   };
   res.render("urls_show", templateVars);
 });
 
 //deleting entry
 app.post("/urls/:id/delete", (req, res) => {
-  delete urlDatabase[req.params.id];
-  res.redirect("/urls");
+  if (req.cookies.user_id.toString() === urlDatabase[req.params.id].userID.toString()){
+    delete urlDatabase[req.params.id];
+    res.redirect("/urls");
+  } else {
+    res.status(403);
+    res.end('<html><head></head><body><p>403: You are attempting an action you are not allowed to do!</p><button onclick="window.history.back();">Go Back</button></body></html>');
+  }
 });
 
 //updating longURL given shortURL and new longURL
 app.post("/urls/:id/update", (req, res) => {
-  urlDatabase[req.params.id] = {
-    url: `http://req.body.updateURL;`,
-    user_id: req.cookies.user_id
+  if (req.cookies.user_id.toString() === urlDatabase[req.params.id].userID.toString()){
+    urlDatabase[req.params.id] = {
+      url: `http://req.body.updateURL;`,
+      userID: req.cookies.user_id
+    }
+    res.redirect("/urls");
+  } else {
+    res.status(403);
+    res.end('<html><head></head><body><p>403: You are attempting an action you are not allowed to do!</p><button onclick="window.history.back();">Go Back</button></body></html>');
   }
-  res.redirect("/urls");
 });
 
 //redirecting to longURL given shortURL
