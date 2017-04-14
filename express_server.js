@@ -11,6 +11,15 @@ const generateRandomString = (length) => {
   return string;
 }
 
+const urlsForUser = (id) => {
+  let user_urls = {};
+  for (let entry in urlDatabase){
+    if(id == urlDatabase[entry].userID)
+      user_urls[entry.toString()] = urlDatabase[entry];
+  }
+  return user_urls;
+}
+
 const app = express();
 const PORT = 8080;
 
@@ -38,14 +47,14 @@ const urlDatabase = {
   },
   "9sm5xK": {
     url: "http://www.google.com",
-    userID: "m4K13"
+    userID: "3Jsq2"
   }
 };
 
+
 //home page
 app.get("/", (req, res) => {
-  let templateVars = {userID: req.cookies.user_id};
-  res.render('landing', templateVars);
+  res.redirect('/urls');
 });
 
 //registration
@@ -104,7 +113,7 @@ app.post("/logout", (req, res) => {
 //displaying page of all shortURL : longURL
 app.get("/urls", (req, res) => {
   let templateVars = {
-    urls: urlDatabase,
+    urls: urlsForUser(req.cookies.user_id),
     userID: req.cookies["user_id"]
   };
   res.render("urls_index", templateVars);
@@ -160,7 +169,7 @@ app.post("/urls/:id/delete", (req, res) => {
 app.post("/urls/:id/update", (req, res) => {
   if (req.cookies.user_id.toString() === urlDatabase[req.params.id].userID.toString()){
     urlDatabase[req.params.id] = {
-      url: `http://req.body.updateURL;`,
+      url: `http://${req.body.updateURL};`,
       userID: req.cookies.user_id
     }
     res.redirect("/urls");
