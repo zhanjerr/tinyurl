@@ -18,7 +18,7 @@ app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
-const users = {
+var users = {
   "m4K13": {
     id: "m4K13",
     email: "user@example.com",
@@ -38,8 +38,8 @@ const urlDatabase = {
 
 //home page
 app.get("/", (req, res) => {
-  // let templateVars = {username: req.cookies["username"]};
-  res.render('landing');
+  let templateVars = {user_id: req.cookies.user_id};
+  res.render('landing', templateVars);
 });
 
 //registration
@@ -63,14 +63,36 @@ app.post("/register", (req, res) => {
 });
 
 //login
+app.get("/login", (req, res) => {
+  if(!users[req.cookies.user_id]) {
+    res.render('login');
+  } else {
+    res.redirect('/urls');
+  }
+});
+
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect('/urls');
+  let input_email = req.body.email;
+  let input_password = req.body.password;
+
+  for (var entry in users) {
+    let entry_email = users[entry.toString()].email;
+    let entry_password = users[entry.toString()].password;
+    if(input_email == entry_email && input_password == entry_password){
+      res.cookie('user_id', users[entry.toString()].id);
+      res.redirect('/urls');
+    } else if(input_email == entry_email) {
+      res.status(403);
+    } else {
+      res.status(403);
+    }
+  }
+  res.end('<html><head></head><body><p>The email and password combo you have entered does not match any registered user.</p><button onclick="window.history.back();">Go Back</button></body></html>')
 });
 
 //logout
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect("/");
 });
 
@@ -78,7 +100,7 @@ app.post("/logout", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"]
+    user_id: req.cookies["user_id"]
   };
   res.render("urls_index", templateVars);
 });
@@ -86,9 +108,12 @@ app.get("/urls", (req, res) => {
 //delivering url obj in JSON
 app.get("/urls.json", (req, res) => {res.json(urlDatabase)});
 
+//delivering users obj in JSON
+app.get("/users.json", (req, res) => {res.json(users)});
+
 //displaying add new url page
 app.get("/urls/new", (req, res) => {
-  let templateVars = {username: req.cookies["username"]};
+  let templateVars = {user_id: req.cookies["user_id"]};
   res.render("urls_new", templateVars);
 });
 
@@ -104,7 +129,7 @@ app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
     longURL: urlDatabase[req.params.id],
-    username: req.cookies["username"]
+    user_id: req.cookies["user_id"]
   };
   res.render("urls_show", templateVars);
 });
