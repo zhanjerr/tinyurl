@@ -114,6 +114,9 @@ app.get("/users.json", (req, res) => {res.json(users)});
 //displaying add new url page
 app.get("/urls/new", (req, res) => {
   let templateVars = {user_id: req.cookies["user_id"]};
+  if(!users[templateVars.user_id]){
+    res.redirect("/login");
+  }
   res.render("urls_new", templateVars);
 });
 
