@@ -32,8 +32,14 @@ var users = {
 }
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    url: "http://www.lighthouselabs.ca",
+    userID: "3Jsq2"
+  },
+  "9sm5xK": {
+    url: "http://www.google.com",
+    userID: "m4K13"
+  }
 };
 
 //home page
@@ -122,8 +128,11 @@ app.get("/urls/new", (req, res) => {
 
 //add a new short URL given long URL
 app.post("/urls/new", (req, res) =>{
-  const shortURL = generateRandomString(6);
-  urlDatabase[shortURL] = `http://${req.body.longURL}`;
+  let shortURL = generateRandomString(6);
+  urlDatabase[shortURL] = {
+    url: `http://${req.body.longURL}`,
+    user_id: req.cookies.user_id
+  };
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -131,8 +140,8 @@ app.post("/urls/new", (req, res) =>{
 app.get("/urls/:id", (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
-    longURL: urlDatabase[req.params.id],
-    user_id: req.cookies["user_id"]
+    longURL: urlDatabase[req.params.id].url,
+    user_id: req.cookies.user_id
   };
   res.render("urls_show", templateVars);
 });
@@ -145,13 +154,16 @@ app.post("/urls/:id/delete", (req, res) => {
 
 //updating longURL given shortURL and new longURL
 app.post("/urls/:id/update", (req, res) => {
-  urlDatabase[req.params.id] = `http://req.body.updateURL;`
+  urlDatabase[req.params.id] = {
+    url: `http://req.body.updateURL;`,
+    user_id: req.cookies.user_id
+  }
   res.redirect("/urls");
 });
 
 //redirecting to longURL given shortURL
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL].url;
   res.redirect(longURL);
 });
 
